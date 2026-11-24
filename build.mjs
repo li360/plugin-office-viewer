@@ -1,5 +1,5 @@
 import { build } from "esbuild"
-import { copyFile, mkdir, stat } from "node:fs/promises"
+import { copyFile, mkdir, readFile, stat } from "node:fs/promises"
 
 // GeWu 插件打包硬约束（见 REQUIREMENTS.md §2.5）：
 // 1. 产物必须是单文件 ESM（宿主经 Blob URL import 加载，无法解析代码分割 chunk）
@@ -15,6 +15,11 @@ const EXTERNAL = [
 
 await mkdir("dist", { recursive: true })
 
+// 合规：官方发布脚本（MyProj/scripts/publish-plugin.ps1）打 ZIP 时只含
+// index.js + manifest.json，THIRD-PARTY-NOTICES.md 不会进 ZIP。为保证
+// Apache-2.0/MIT 的许可声明随分发产物走，把完整声明以 banner 注入 index.js。
+const notices = await readFile("THIRD-PARTY-NOTICES.md", "utf8")
+
 await build({
   entryPoints: ["src/index.tsx"],
   bundle: true,
@@ -24,6 +29,7 @@ await build({
   external: EXTERNAL,
   // 单文件自包含：任何动态 import 目标要么是 external 的宿主模块，要么报错
   splitting: false,
+  banner: { js: `/*\n${notices.replace(/\*\//g, "*∕")}\n*/` },
   logLevel: "info",
 })
 
