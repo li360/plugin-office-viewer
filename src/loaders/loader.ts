@@ -70,8 +70,8 @@ function toArrayBuffer(bytes: Uint8Array): ArrayBuffer {
     : buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength)
 }
 
-/** 从 viewer 错误信息推断降级类别 */
-function classifyError(err: unknown): RenderFailure {
+/** 从 viewer 错误信息推断降级类别（导出供单测；分类规则见 REQUIREMENTS §5.4） */
+export function classifyError(err: unknown): RenderFailure {
   const msg = String(err ?? "")
   if (/unsupported/i.test(msg)) return { level: "error", kind: "not-supported" }
   if (/password|encrypt|corrupt|invalid|parse/i.test(msg)) return { level: "error", kind: "corrupt" }
