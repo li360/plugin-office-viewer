@@ -11,7 +11,7 @@ import { spreadsheetRenderer } from "@file-viewer/renderer-spreadsheet"
 import { presentationRenderer } from "@file-viewer/renderer-presentation"
 
 import type { FileViewerOptions } from "@file-viewer/core"
-import { getHostTheme } from "../host-theme"
+import { getHostTheme, applyViewerThemeBridge } from "../host-theme"
 import type { OfficeFormatFamily } from "../format"
 
 /**
@@ -129,6 +129,8 @@ export function getAdapter(_family: OfficeFormatFamily): RenderAdapter {
                 presentation: { pptWorker: false },
                 hooks: {
                   onLoadComplete: (ctx: { duration?: number }) => {
+                    // shell 已挂载 → 应用宿主主题令牌桥接（var 引用，此后自动跟随宿主主题）
+                    applyViewerThemeBridge(req.container)
                     const ms = typeof ctx?.duration === "number" ? Math.round(ctx.duration) : undefined
                     finish(() => resolve({ statusText: ms !== undefined ? `已打开 · ${ms}ms` : "已打开" }))
                   },
@@ -154,6 +156,8 @@ export function getAdapter(_family: OfficeFormatFamily): RenderAdapter {
           getApi(): { updateOptions?: (o: Partial<FileViewerOptions>) => void } | null
         }).getApi()
         api?.updateOptions?.({ theme })
+        // updateOptions 可能重建 shell → 重新应用令牌桥接
+        if (container) applyViewerThemeBridge(container)
       } catch {
         /* 主题联动失败不致命，保留当前主题 */
       }
