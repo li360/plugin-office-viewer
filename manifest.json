@@ -1,0 +1,12 @@
+{
+  "id": "plugin-office-viewer",
+  "name": "旧版 Office 查看器",
+  "version": "0.1.0",
+  "description": "查看 Word/Excel/PowerPoint 97-2003 旧版二进制文档（.doc/.xls/.ppt），只读预览，不执行宏",
+  "author": "<待 M6 确认>",
+  "repository": "https://github.com/li360/plugin-office-viewer",
+  "minAppVersion": "0.39.0",
+  "capabilities": ["kmgr:read"],
+  "emits": ["office-viewer:status"],
+  "handles": ["file:open"]
+}
