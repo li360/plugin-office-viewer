@@ -48,6 +48,23 @@ npm run build
 
 OOXML（`.docx/.xlsx/.pptx`）由宿主内置支持，本插件不覆盖。
 
+## UI 规范合规
+
+对照宿主 [插件 UI 最佳实践](https://github.com/GeWu/MyProj/blob/main/docs/plugin-development/ui-guidelines.md) 自检：
+
+| 规范条目 | 状态 |
+|---------|------|
+| 复杂查看器工具栏允许自研/第三方（§3） | ✅ 按例外条款接入 file-viewer 工具栏 |
+| 工具栏尺寸对齐宿主紧凑档（§3） | ✅ `ui: { density: "compact" }`（26px 按钮/34px 工具栏） |
+| 使用 design-tokens 颜色/字体/圆角（§3/§4） | ✅ design-tokens → `--file-viewer-*` 令牌桥接（`src/host-theme.ts`），无硬编码色值 |
+| Shadow DOM 显式桥接变量（§4） | ✅ 内联覆盖 shell（内部默认声明会击败继承） |
+| 跟随宿主语言，不固定 locale（§6） | ✅ `<html lang>`/浏览器语言实时检测（`src/strings.ts`），每次打开重挂载生效 |
+| 无硬编码中文（§6） | ✅ 文案集中于 `strings.ts` 双语表 |
+| 浮层 z-index 分层（§7） | ✅ viewer 默认 20/30，远低于宿主浮层带（1200-1500），无冲突 |
+| 无第二套"..."/固定/排序（§3） | ✅ 工具栏仅 打印/缩放/搜索 三项 |
+| emoji 与矢量图标不混用（§5） | ✅ manifest.icon 用 emoji，fileIcons 用 icon-library IconName |
+| 键盘可操作（§8） | ✅ 工具栏按钮为原生 button（viewer 内部保证） |
+
 ## 已知行为
 
 - **`.xls` 默认关联**：内置「XLSX 查看器」也声明了 `.xls`，且宿主默认关联按插件注册顺序取内置优先——安装本插件后 `.xls` 默认仍由内置查看器打开。请在 **设置 → 文件关联** 中把 `.xls` 的默认项切换为「旧版 Office 查看器」并保存（一次即可，持久生效）。

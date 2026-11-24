@@ -20,6 +20,8 @@ export const zh = {
   "office-viewer.error.internal": "解析过程中发生内部错误，已记录日志。",
   "office-viewer.hint.ppt": "建议将 .ppt 另存为 .pptx 以获得更高保真度的预览。",
   "office-viewer.status.idle": "-",
+  "office-viewer.status.opened": "已打开",
+  "office-viewer.status.openedMs": "已打开 · {ms}ms",
   "office-viewer.status.wordPages": "{count} 页",
   "office-viewer.status.sheets": "{count} 个工作表",
   "office-viewer.status.slides": "{count} 张幻灯片",
@@ -45,6 +47,8 @@ export const en: Strings = {
   "office-viewer.error.internal": "An internal error occurred during parsing; it has been logged.",
   "office-viewer.hint.ppt": "Save as .pptx for a higher-fidelity preview.",
   "office-viewer.status.idle": "-",
+  "office-viewer.status.opened": "Opened",
+  "office-viewer.status.openedMs": "Opened · {ms}ms",
   "office-viewer.status.wordPages": "{count} pages",
   "office-viewer.status.sheets": "{count} sheets",
   "office-viewer.status.slides": "{count} slides",
@@ -52,8 +56,26 @@ export const en: Strings = {
 
 const TABLES: Record<string, Strings> = { zh, en }
 
-/** 取文案并做 {var} 插值。当前宿主语言未知，v1 默认中文 */
-export function t(key: StringKey, vars?: Record<string, string | number>, lang = "zh"): string {
+/**
+ * 宿主语言检测（ui-guidelines.md §6）：
+ * 优先 <html lang>（宿主 I18nProvider 同步），缺失时回退浏览器语言。
+ * 每次调用实时读取——每次 file:open 渲染都会重挂载，天然满足"重开后使用正确语言"。
+ */
+export function getHostLang(): "zh" | "en" {
+  const raw =
+    (typeof document !== "undefined" ? document.documentElement.lang : "") ||
+    (typeof navigator !== "undefined" ? navigator.language : "") ||
+    ""
+  return raw.toLowerCase().startsWith("en") ? "en" : "zh"
+}
+
+/** viewer 渲染器 locale（同源检测；禁止固定 locale —— ui-guidelines.md §6） */
+export function getViewerLocale(): "zh-CN" | "en-US" {
+  return getHostLang() === "en" ? "en-US" : "zh-CN"
+}
+
+/** 取文案并做 {var} 插值。语言默认跟随宿主（ui-guidelines.md §6） */
+export function t(key: StringKey, vars?: Record<string, string | number>, lang = getHostLang()): string {
   const table = TABLES[lang] ?? zh
   let s: string = table[key]
   if (vars) {
