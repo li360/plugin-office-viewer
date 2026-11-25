@@ -11,6 +11,7 @@ import { spreadsheetRenderer } from "@file-viewer/renderer-spreadsheet"
 import { presentationRenderer } from "@file-viewer/renderer-presentation"
 
 import type { FileViewerOptions } from "@file-viewer/core"
+import { getHostTheme } from "../host-theme"
 import type { OfficeFormatFamily } from "../format"
 
 /**
@@ -51,6 +52,8 @@ export type RenderFailure =
 export interface RenderAdapter {
   /** 渲染到容器。resolve 表示渲染完成；reject RenderFailure */
   render(req: RenderRequest): Promise<RenderSummary>
+  /** 实时切换 viewer 主题（宿主主题联动；渲染完成后调用） */
+  setTheme(theme: "light" | "dark"): void
   /** 销毁 viewer 实例、清空容器 DOM（切换文件/卸载时调用） */
   dispose(): void
 }
@@ -113,6 +116,13 @@ export function getAdapter(_family: OfficeFormatFamily): RenderAdapter {
                 renderers: RENDERERS,
                 locale: "zh-CN",
                 toolbar: true,
+                // 初始主题跟随宿主（<html data-theme>）；运行时联动走 setTheme
+                theme: getHostTheme(),
+                // Blob URL 插件环境下 Worker 必然失败：
+                // 引擎默认 'auto' 会执行 new URL('./pptjs.worker.js', import.meta.url)，
+                // 而 import.meta.url 是 blob:（不透明路径，不能作相对解析 base）→ Invalid URL。
+                // false = 强制主线程解析（引擎自带 pptjs.browser.js，官方支持的形态）。
+                presentation: { pptWorker: false },
                 hooks: {
                   onLoadComplete: (ctx: { duration?: number }) => {
                     const ms = typeof ctx?.duration === "number" ? Math.round(ctx.duration) : undefined
@@ -131,6 +141,18 @@ export function getAdapter(_family: OfficeFormatFamily): RenderAdapter {
           finish(() => reject(classifyError(err)))
         }
       })
+    },
+    setTheme(theme: "light" | "dark"): void {
+      if (!controller) return
+      try {
+        // mountViewer 返回 ViewerController，getApi() 即 FileViewerInstance
+        const api = (controller as unknown as {
+          getApi(): { updateOptions?: (o: Partial<FileViewerOptions>) => void } | null
+        }).getApi()
+        api?.updateOptions?.({ theme })
+      } catch {
+        /* 主题联动失败不致命，保留当前主题 */
+      }
     },
     dispose(): void {
       try {

@@ -48,6 +48,13 @@ npm run build
 
 OOXML（`.docx/.xlsx/.pptx`）由宿主内置支持，本插件不覆盖。
 
+## 已知行为
+
+- **主题跟随宿主**：预览界面初始主题跟随 GeWu 当前主题（暗色主题 → 深色预览，其余 → 浅色预览），
+  切换 GeWu 主题时实时联动；也可用预览工具栏按钮独立切换。
+- **`.ppt` 主线程解析**：受插件 Blob URL 加载环境限制，`.ppt` 解析在主线程执行，
+  超大文件（数十 MB）加载期间可能出现短暂卡顿。
+
 ## 第三方组件
 
 本插件打包产物内联了 [flyfish-dev/file-viewer](https://github.com/flyfish-dev/file-viewer)

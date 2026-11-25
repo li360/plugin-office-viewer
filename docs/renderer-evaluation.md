@@ -60,7 +60,38 @@ esbuild bundle（`--format=esm`、`splitting: false`、external 六项 react 系
 3. **bundle 死重**：docx 引擎（约 3.1 MB 源码，打包后占部分体积）被打进产物但不执行。若未来体积超标，可尝试把 `renderer-word` 内部 `./wordDocx.js` 等子模块 external（有 Blob URL 运行时风险），或等上游提供 tree-shaking 友好入口。当前 5.1 MB 达标，不动。
 4. **禁用下载按钮**：viewer 工具栏含"下载"按钮（导出原文件）。只读边界不受影响（不写库内文件），但若产品上不希望出现，M3 可用 `toolbar` 配置裁剪（待定，默认保留）。
 
-## 5. 接入方式（M3 按此实现）
+## 5. M5 宿主实测发现与修复（2026-11-24）
+
+### 5.1 `.ppt` 预览失败：`Failed to construct 'URL': Invalid URL` ✅ 已修复
+
+**根因**：`@file-viewer/ppt` 引擎默认 `worker: 'auto'`，创建 Worker 时执行
+`new Worker(url ?? new URL('./pptjs.worker.js', import.meta.url))`（`worker-client.js:12`）。
+esbuild 打包进插件单文件后，`import.meta.url` = 插件自身的 Blob URL
+（`blob:http://...`，URL 规范中 blob: 为不透明路径，不能作为相对解析的 base），
+`new URL` 构造即抛错。`.doc/.xls` 渲染路径不触碰该代码，故正常。
+
+**修复**：挂载选项传入 `presentation: { pptWorker: false }`——引擎公开的类型化选项
+（`FileViewerPresentationOptions.pptWorker`），强制走主线程解析（引擎自带的
+`pptjs.browser.js`，官方支持的形态）。代价：`.ppt` 解析在主线程执行，
+大文件可能短暂阻塞 UI（已有 50 MB 上限与加载态缓解）。
+
+### 5.2 主题与宿主联动 ✅ 已实现
+
+**背景**：viewer 主题独立（`'light' | 'dark' | 'system'`），`'system'` 只跟操作系统
+`prefers-color-scheme`，与宿主应用主题无关；初始默认深色，与 GeWu 亮色主题不一致。
+
+**机制**：
+- 宿主把当前主题写在 `<html data-theme="...">`（内置 `light/dark/colorful/ocean/aurora`，
+  `ThemeContext.tsx` 同步该属性）；
+- 插件新增 `src/host-theme.ts`：读取属性映射（`dark → viewer dark`，其余 → `light`），
+  MutationObserver 监听属性变化；
+- 运行时切换：`controller.getApi()` 返回的 `FileViewerInstance.updateOptions({ theme })`
+  免重挂载实时生效（viewer 工具栏的主题按钮同款机制）；
+- 映射限制：GeWu 的 `colorful/ocean/aurora` 等非 dark 主题统一映射为 viewer 亮色
+  （viewer 只有明暗两态，无法逐主题对齐 CSS 变量，Shadow DOM 隔离下也不应继承宿主变量）。
+- 用户仍可用 viewer 工具栏按钮独立切换，切换宿主主题时会被重新同步。
+
+## 6. 接入方式（M3 按此实现）
 
 ```js
 import { mountViewer } from "@file-viewer/core/browser"

@@ -15,6 +15,7 @@ import {
 } from "./format"
 import { getAdapter } from "./loaders/loader"
 import type { RenderFailure } from "./loaders/loader"
+import { observeHostTheme } from "./host-theme"
 import { t, type StringKey } from "./strings"
 import type { DocumentTypeContribution } from "./host-contract"
 
@@ -82,9 +83,16 @@ export function OfficeViewer(_ctx: PluginContext) {
   /** 渲染目标容器 —— 适配器直接操作 DOM */
   const containerRef = useRef<HTMLDivElement>(null)
   /** 当前适配器实例（切换文件/卸载时 dispose） */
-  const adapterRef = useRef<{ dispose(): void } | null>(null)
+  const adapterRef = useRef<{ dispose(): void; setTheme(theme: "light" | "dark"): void } | null>(null)
   /** 请求序号：快速连续切换文件时丢弃过期解析结果 */
   const seqRef = useRef(0)
+
+  // 宿主主题联动：<html data-theme> 变化时同步 viewer 主题（免重挂载）
+  useEffect(() => {
+    return observeHostTheme((theme) => {
+      adapterRef.current?.setTheme(theme)
+    })
+  }, [])
 
   const activeFamily = family
 
