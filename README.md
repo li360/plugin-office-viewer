@@ -51,9 +51,9 @@ OOXML（`.docx/.xlsx/.pptx`）由宿主内置支持，本插件不覆盖。
 ## 里程碑状态
 
 - [x] M1 仓库脚手架（可构建 + 单测 + typecheck）
-- [ ] M2 渲染方案验证 spike（`docs/renderer-evaluation.md`）
-- [ ] M3 核心实现（渲染适配器接入）
-- [ ] M4 测试
+- [x] M2 渲染方案验证 spike（`docs/renderer-evaluation.md`，方案 A 定稿）
+- [x] M3 核心实现（file-viewer 渲染适配器接入，产物 5.1 MB）
+- [ ] M4 测试（补 `.doc/.ppt` 固件与 loader 单测）
 - [ ] M5 宿主端到端验收
 - [ ] M6 GitHub Release
 - [ ] M7 社区 registry PR
