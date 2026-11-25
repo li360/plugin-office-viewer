@@ -368,9 +368,9 @@ plugin-office-viewer/
 | # | 占位项 | 当前值 | 需确认内容 |
 |---|--------|--------|-----------|
 | 1 | 仓库归属 | `li360/plugin-office-viewer` | ✅ 已确认（2026-11-24）；若届时发现 GitHub 上实际组织/用户名不是 `li360`，**必须先向用户报告并以用户给出的为准** |
-| 2 | `author` | `<填写>` | 发布署名（个人名/组织名） |
-| 3 | GitHub 账号与权限 | — | 用于创建仓库、推送源码、发 Release、提 registry PR 的账号（`gh` CLI 登录态）；无权限时的处理方式 |
-| 4 | registry PR 条目 | author/repository/icon | `icon` 的 emoji、PR 描述口径 |
-| 5 | Release 渠道 | — | 首发 tag 命名（建议 `v0.1.0`）与是否需要 beta 预发布标记 |
+| 2 | `author` | `li360` | ✅ 已确认（2026-11-25），已写入 manifest.json |
+| 3 | GitHub 账号与权限 | ✅ `gh` CLI 已登录 `li360`（keyring，`repo`/`workflow` scope） | 可直接创建仓库、推送源码、发 Release、更新 registry；发布走官方脚本 `MyProj/scripts/publish-plugin.ps1`（需 pwsh 7） |
+| 4 | registry 条目 | icon 📄（沿用 manifest.icon）；**直推而非 PR** | registry 仓库 `li360/gewu-plugins-registry` 为本人直接维护（现有 4 条目均为直推先例），M7 按 `publish-plugin.ps1 -PushRegistry` 执行；条目 9 字段全部由脚本从 manifest + 产物自动生成 |
+| 5 | Release 渠道 | tag `v0.1.0`，正式发布 | ✅ 用户确认（2026-11-25）；不加 beta 预发布标记 |
 
-> 上述 2-5 在 M6-M7 前一次性询问用户确认；确认结果回填本表并同步到 `manifest.json` 与 PR 条目。
+> ~~上述 2-5 在 M6-M7 前一次性询问用户确认~~ ✅ 已全部确认（2026-11-25），M6-M7 可执行。
