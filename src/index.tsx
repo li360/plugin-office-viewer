@@ -15,7 +15,7 @@ import {
 } from "./format"
 import { getAdapter } from "./loaders/loader"
 import type { RenderFailure } from "./loaders/loader"
-import { observeHostTheme } from "./host-theme"
+import { observeHostTheme, VIEWER_TOKEN_BRIDGE } from "./host-theme"
 import { t, type StringKey } from "./strings"
 import type { DocumentTypeContribution } from "./host-contract"
 
@@ -251,7 +251,16 @@ export function OfficeViewer(_ctx: PluginContext) {
         </div>
       )}
       <div style={{ flex: 1, position: "relative", minHeight: 0 }}>
-        <div ref={containerRef} style={{ position: "absolute", inset: 0, overflow: "auto" }} />
+        <div
+          ref={containerRef}
+          style={{
+            position: "absolute",
+            inset: 0,
+            overflow: "auto",
+            // 主题令牌桥接：GeWu design-tokens → file-viewer（穿透 Shadow DOM 继承）
+            ...(VIEWER_TOKEN_BRIDGE as React.CSSProperties),
+          }}
+        />
         {view.kind !== "rendered" && (
           <div
             style={{

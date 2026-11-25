@@ -347,6 +347,7 @@ plugin-office-viewer/
 3. **`fileIcons` 是否参与文件列表图标**：spec §8.1 指出第三方插件无法贡献文件图标；验证 `fileIcons` 字段在 0.39.x 的实际效果并登记差距。
 4. **大文件上限**：spec §12 开放问题 1（`readFileBytes` 是否支持 range、上限多少）——本插件实测后把数据反馈给主项目。
 5. **`.xls` 默认文件关联偏向内置插件（M5 实测，2026-11-24）**：内置 `xlsx-viewer` 与本插件同时声明 `.xls`，宿主默认关联解析按注册顺序取首位（`getEditorForExt` 遍历 plugins Map；`SettingsPanel.buildDefaultAssociations` 同规则），内置插件同步注册先于外部插件异步注册，故 `.xls` 默认落入内置查看器（SheetJS 转裸表格，保真度低于本插件的网格预览）；用户已保存的关联还会持久覆盖默认值。插件侧无法通过 manifest 表达优先级。**建议宿主改进**：①扩展名被多插件声明时在安装/启用环节提示用户选择默认关联；②默认排序引入扩展名声明专用度（如同时声明 `.xls/.xlsx/.xlsm` 的通用查看器让位于专用查看器）或支持 manifest 优先级字段。
+6. **建议建立《插件 UI 样式规范》文档（M5 评估，2026-11-24）**：现有 `toolbar.md`（宿主统一工具栏）、`themes.md`（主题变量覆盖）、`i18n.md`（文案）覆盖了部分 UI 面，但缺一份面向插件作者的完整样式规范。建议内容：① design-tokens 变量消费清单（哪些 `--color-*/--font-*/--space-*/--radius-*/--shadow-*` 可用，禁止硬编码色值）；② 宿主 UI 契约组件的使用边界（引 toolbar.md，扩展到容器头部/菜单/对话框）；③ **Shadow DOM / iframe 隔离场景的令牌桥接指引**（CSS 自定义属性穿透继承、内部默认值需内联覆盖的模式——本插件 `src/host-theme.ts` 可作示范实现）；④ 图标库（icon-library）对插件的可用性；⑤ 第三方 SDK 自带 UI 的处理策略（裁剪 vs 桥接 vs 重造的决策标准）。
 
 ---
 
