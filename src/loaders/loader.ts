@@ -115,7 +115,11 @@ export function getAdapter(_family: OfficeFormatFamily): RenderAdapter {
                 builtinRenderers: "none",
                 renderers: RENDERERS,
                 locale: "zh-CN",
-                toolbar: true,
+                // 工具栏裁剪（M5 评估）：
+                // - download/exportHtml：GeWu 桌面场景无消费路径（文件在库内，可经文件列表操作）
+                // - theme：已与宿主主题联动，双入口会导致状态不同步
+                // - 保留 print（桌面端真实需求）/ zoom / search
+                toolbar: { download: false, exportHtml: false, theme: false },
                 // 初始主题跟随宿主（<html data-theme>）；运行时联动走 setTheme
                 theme: getHostTheme(),
                 // Blob URL 插件环境下 Worker 必然失败：
