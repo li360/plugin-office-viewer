@@ -1,0 +1,28 @@
+{
+  "name": "plugin-office-viewer",
+  "version": "0.1.0",
+  "description": "GeWu 插件：查看 Word/Excel/PowerPoint 97-2003 旧版二进制文档（.doc/.xls/.ppt），只读预览",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "node build.mjs",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@file-viewer/core": "3.3.6",
+    "@file-viewer/renderer-presentation": "3.3.6",
+    "@file-viewer/renderer-spreadsheet": "3.3.6",
+    "@file-viewer/renderer-word": "3.3.6",
+    "kmgr-api": "file:./plugin-sdk/kmgr-api-0.1.0.tgz",
+    "plugin-protocol": "file:./plugin-sdk/plugin-protocol-0.1.0.tgz",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "esbuild": "^0.21.0",
+    "typescript": "^5.0.0",
+    "vitest": "^2.0.0"
+  }
+}
