@@ -86,5 +86,5 @@ OOXML（`.docx/.xlsx/.pptx`）由宿主内置支持，本插件不覆盖。
 - [x] M3 核心实现（file-viewer 渲染适配器接入，产物 5.1 MB）
 - [x] M4 测试（27 项单测：format 层 12 + loader 封装层 15；固件见 `test-fixtures/`，均为自产示例）
 - [x] M5 宿主端到端验收（验收记录：`docs/m5-acceptance.md`；5 项人工复核并入 M6 发布门禁）
-- [ ] M6 GitHub Release
-- [ ] M7 社区 registry PR
+- [x] M6 GitHub Release（`v0.1.0` 已发布：ZIP + update.json，sha256 见 registry 条目；**源码推送待网络恢复**——github.com 直连被阻，api/资产上传通道正常）
+- [x] M7 社区 registry（`li360/gewu-plugins-registry` 条目已上线，Contents API 直推 commit `6d1dd16`；本地 registry 克隆下次同步时拉取）
