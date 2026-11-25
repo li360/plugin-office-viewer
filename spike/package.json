@@ -1,0 +1,22 @@
+{
+  "name": "spike",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@file-viewer/core": "^3.3.6",
+    "@file-viewer/react": "^3.3.6",
+    "@file-viewer/renderer-presentation": "^3.3.6",
+    "@file-viewer/renderer-spreadsheet": "^3.3.6",
+    "@file-viewer/renderer-word": "^3.3.6",
+    "esbuild": "^0.21.0",
+    "xlsx": "^0.18.5"
+  }
+}
