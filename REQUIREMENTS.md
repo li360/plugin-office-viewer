@@ -290,8 +290,8 @@ const manifest: PluginManifest = {
 | M1 | 仓库脚手架：package.json/tsconfig/build.mjs/AGENTS.md/CONTRACT.md/plugin-sdk tarball/`.gitignore`；`npm run typecheck` 通过 | 可构建空插件（计步器级） |
 | M2 | 渲染方案验证 spike：§4.2 四项前提逐项验证，**输出验证记录**（含实测体积）到 `docs/renderer-evaluation.md`；失败则启用替代方案并记录决策 | 选型定稿 |
 | M3 | 核心实现：file:open 接入（过滤/魔数/内容获取）、三格式解析渲染、降级链与错误卡片、状态栏、卸载清理 | 功能完整 |
-| M4 | 测试：§6.1 单测全绿；准备 §6.2 固件；`npm test`/`npm run typecheck`/`npm run build` 通过 | 测试报告 |
-| M5 | 宿主端到端：本地安装（`%APPDATA%\com.gewu.desktop\plugins\plugin-office-viewer\` 复制或手动装 ZIP）→ §6.3 逐项验收 | 验收记录 |
+| M4 | 测试：§6.1 单测全绿；准备 §6.2 固件；`npm test`/`npm run typecheck`/`npm run build` 通过 | 测试报告（✅ 2026-11-25，27 项单测；"请求序号丢弃"组件层路径由 §6.3 #3 覆盖） |
+| M5 | 宿主端到端：本地安装（`%APPDATA%\com.gewu.desktop\plugins\plugin-office-viewer\` 复制或手动装 ZIP）→ §6.3 逐项验收 | 验收记录（✅ 2026-11-25 关闭，见 `docs/m5-acceptance.md`；5 项人工复核并入 M6 门禁） |
 | M6 | 打包发布：`dist/`（index.js + manifest.json）→ ZIP（两文件在根目录）+ SHA256 + `update.json`（参考 `MyProj/packages/sample-theme-plugin/pack.ps1` 或 srt-viewer 的打包脚本）；创建 GitHub 仓库 `li360/plugin-office-viewer`，推送源码；GitHub Release 上传 `gewu-plugin.zip` + `update.json`（Release 约定路径 `releases/latest/download/`） | Release 可 URL 安装 |
 | M7 | 上架社区：向 `li360/gewu-plugins-registry` 提 PR，`registry.json` 追加一项（id/name/version/downloadUrl/description/author/repository/icon/checksum；checksum 为 gewu-plugin.zip 的 SHA256）；README 补「兼容性」说明（仅 0.39.x） | PR 链接 |
 
