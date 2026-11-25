@@ -12,6 +12,7 @@ import { presentationRenderer } from "@file-viewer/renderer-presentation"
 
 import type { FileViewerOptions } from "@file-viewer/core"
 import { getHostTheme, applyViewerThemeBridge } from "../host-theme"
+import { t, getViewerLocale } from "../strings"
 import type { OfficeFormatFamily } from "../format"
 
 /**
@@ -114,7 +115,10 @@ export function getAdapter(_family: OfficeFormatFamily): RenderAdapter {
                 rendererMode: "replace",
                 builtinRenderers: "none",
                 renderers: RENDERERS,
-                locale: "zh-CN",
+                locale: getViewerLocale(),
+                // ui-guidelines.md §3：复杂查看器工具栏须对齐宿主紧凑工具栏
+                // （按钮约 24-26px），默认 comfortable 的 30px 按钮/45px 工具栏过宽
+                ui: { density: "compact" },
                 // 工具栏裁剪（M5 评估）：
                 // - download/exportHtml：GeWu 桌面场景无消费路径（文件在库内，可经文件列表操作）
                 // - theme：已与宿主主题联动，双入口会导致状态不同步
@@ -132,7 +136,14 @@ export function getAdapter(_family: OfficeFormatFamily): RenderAdapter {
                     // shell 已挂载 → 应用宿主主题令牌桥接（var 引用，此后自动跟随宿主主题）
                     applyViewerThemeBridge(req.container)
                     const ms = typeof ctx?.duration === "number" ? Math.round(ctx.duration) : undefined
-                    finish(() => resolve({ statusText: ms !== undefined ? `已打开 · ${ms}ms` : "已打开" }))
+                    finish(() =>
+                      resolve({
+                        statusText:
+                          ms !== undefined
+                            ? t("office-viewer.status.openedMs", { ms })
+                            : t("office-viewer.status.opened"),
+                      }),
+                    )
                   },
                 },
               },
