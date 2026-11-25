@@ -48,6 +48,13 @@ npm run build
 
 OOXML（`.docx/.xlsx/.pptx`）由宿主内置支持，本插件不覆盖。
 
+## 第三方组件
+
+本插件打包产物内联了 [flyfish-dev/file-viewer](https://github.com/flyfish-dev/file-viewer)
+系列库的编译产物（Apache-2.0 / MIT，未修改上游代码）。完整组件清单、
+许可证文本与 NOTICE 见 [THIRD-PARTY-NOTICES.md](./THIRD-PARTY-NOTICES.md)
+（随 Release ZIP 一并分发）。本插件自身代码以 MIT 发布。
+
 ## 里程碑状态
 
 - [x] M1 仓库脚手架（可构建 + 单测 + typecheck）

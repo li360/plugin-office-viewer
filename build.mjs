@@ -28,6 +28,8 @@ await build({
 })
 
 await copyFile("manifest.json", "dist/manifest.json")
+// Apache-2.0/MIT 合规：许可证文本与 NOTICE 随分发
+await copyFile("THIRD-PARTY-NOTICES.md", "dist/THIRD-PARTY-NOTICES.md")
 
 const info = await stat("dist/index.js")
-console.log(`✅ 打包完成：dist/index.js（${(info.size / 1024).toFixed(0)} KB）+ dist/manifest.json`)
+console.log(`✅ 打包完成：dist/index.js（${(info.size / 1024).toFixed(0)} KB）+ dist/manifest.json + THIRD-PARTY-NOTICES.md`)

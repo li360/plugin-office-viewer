@@ -6,3 +6,7 @@ dist/
 spike/node_modules/
 spike/out/
 spike/package-lock.json
+# 测试固件（真实 Office 文件不进 git，版权边界见 REQUIREMENTS §6.2）
+test-fixtures/*.doc
+test-fixtures/*.xls
+test-fixtures/*.ppt
