@@ -41,8 +41,9 @@ export function observeHostTheme(onChange: (theme: "light" | "dark") => void): (
  * file-viewer 的 UI（工具栏/按钮/输入框/焦点环）即使用宿主主题配色与字体；
  * 值均为 var(...) 引用，宿主切换主题时**自动跟随，无需 JS**。
  *
- * 只桥接颜色/字体/圆角/阴影语义；尺寸类变量（按钮高度/内边距/min-width 等）
- * 保持 file-viewer 默认值，避免第三方布局被宿主间距体系破坏。
+ * 颜色/字体/圆角/阴影语义 + **尺寸基线**（CONTRACT 验收基线表：工具栏行高 28–32px、
+ * 按钮 22–24px、圆角 radius-sm——2026-11-27 起按上游验收口径对齐，此前刻意排除的
+ * 尺寸类变量改为桥接；搜索胶囊 999px 圆角同源令牌一并收敛）。
  *
  * file-viewer 变量清单来源：@file-viewer/core dist 内 var( 消费点全量扫描。
  */
@@ -74,6 +75,14 @@ export const VIEWER_TOKEN_BRIDGE: Record<string, string> = {
   // 焦点环与字体
   "--file-viewer-focus-ring": "var(--color-focus-ring)",
   "--file-viewer-font": "var(--font-family-ui)",
+  // 尺寸基线（验收基线表；搜索胶囊圆角与工具栏同源令牌）
+  "--file-viewer-toolbar-min-height": "30px",
+  "--file-viewer-toolbar-radius": "var(--radius-sm)",
+  "--file-viewer-button-height": "23px",
+  "--file-viewer-button-min-width": "0",
+  "--file-viewer-icon-button-size": "23px",
+  "--file-viewer-search-input-height": "23px",
+  "--file-viewer-zoom-meter-min-width": "44px",
 }
 
 /**

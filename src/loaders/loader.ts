@@ -12,6 +12,7 @@ import { presentationRenderer } from "@file-viewer/renderer-presentation"
 
 import type { FileViewerOptions } from "@file-viewer/core"
 import { getHostTheme, applyViewerThemeBridge } from "../host-theme"
+import { installOfficeShellUi } from "./office-css"
 import { t, getViewerLocale } from "../strings"
 import type { OfficeFormatFamily } from "../format"
 
@@ -135,6 +136,8 @@ export function getAdapter(_family: OfficeFormatFamily): RenderAdapter {
                   onLoadComplete: (ctx: { duration?: number }) => {
                     // shell 已挂载 → 应用宿主主题令牌桥接（var 引用，此后自动跟随宿主主题）
                     applyViewerThemeBridge(req.container)
+                    // GeWu 基线字号/字重覆盖（12px/800 → 11px/400，office-css.ts）
+                    installOfficeShellUi(req.container.shadowRoot)
                     const ms = typeof ctx?.duration === "number" ? Math.round(ctx.duration) : undefined
                     finish(() =>
                       resolve({
@@ -167,8 +170,11 @@ export function getAdapter(_family: OfficeFormatFamily): RenderAdapter {
           getApi(): { updateOptions?: (o: Partial<FileViewerOptions>) => void } | null
         }).getApi()
         api?.updateOptions?.({ theme })
-        // updateOptions 可能重建 shell → 重新应用令牌桥接
-        if (container) applyViewerThemeBridge(container)
+        // updateOptions 可能重建 shell → 重新应用令牌桥接 + 基线覆盖
+        if (container) {
+          applyViewerThemeBridge(container)
+          installOfficeShellUi(container.shadowRoot)
+        }
       } catch {
         /* 主题联动失败不致命，保留当前主题 */
       }
