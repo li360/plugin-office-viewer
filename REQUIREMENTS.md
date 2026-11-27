@@ -374,3 +374,33 @@ plugin-office-viewer/
 | 5 | Release 渠道 | tag `v0.1.0`，正式发布 | ✅ 用户确认（2026-11-25）；不加 beta 预发布标记 |
 
 > ~~上述 2-5 在 M6-M7 前一次性询问用户确认~~ ✅ 已全部确认（2026-11-25），M6-M7 可执行。
+
+## 13. 打印能力评估与 backlog（2026-11-27）
+
+**现状实证（node_modules @file-viewer dist 扫描）**：
+- 打印按钮显隐是**渲染器能力驱动**（capability → core 工具栏按能力渲染），不是插件可开关的 UI 项；
+- word（.doc/.dot）：有完整打印管线（msdoc 分页 `.msdoc-page` + 打印页样式 + `getPrintMaskPages`
+  遮罩打印接点）→ 按钮可见 ✓
+- ppt/pptx（presentation 族）：`print: true` → 按钮可见 ✓
+- **xls/xlt（spreadsheet 族）：渲染器显式声明 `registerExportAdapter({ print: false, exportHtml: false })`**
+  → 按钮隐藏。根因是上游表格引擎无打印管线（worker 渲染无分页/打印布局），插件侧无开关可开。
+
+**通用化路径（三级）**：
+1. 短期（插件侧）：xls 打开时状态文案提示「此格式暂不支持打印」（避免与其他族的能力差异困惑）；
+2. 中期（上游 Issue 5，随 0→4 顺序后提）：renderer-spreadsheet 打印管线——表格分页 +
+   打印页样式，参照 msdoc 的 `getPrintMaskPages` 契约（core 遮罩打印即可复用）；
+3. 原则：按钮显隐继续走能力探测，**不硬造不可用的按钮**（与导出能力探测同哲学）。
+
+**遮罩/盖章打印（core features/printMaskDesigner.js）改进建议**：
+- UI 与 GeWu 不一致（实证）：designer 内联样式硬编码 system-ui、`#40546a` 文字、999px 胶囊按钮、
+  800/12px 字重字号、上游绿 hover（rgba(33,163,102,.1)/#16774c）——同 core 老风格，
+  **未走 core 已有的 --file-viewer-* 令牌体系**（core 打印菜单本身已令牌化，designer 没跟上，
+  属上游内部不一致，可作 issue 佐证）；
+- 印章上传 = 隐藏 `<input type="file" accept="image/*">` + FileReader（弹系统选择器），
+  不符合桌面软件习惯；
+- 建议：
+  1. **短期（插件侧）**：office-css.ts 扩 `.fv-print-mask-*` 节（双类名特异性，同 L3 范式）
+     对齐基线表——上游令牌化 designer 后整节删除；
+  2. **上游 issue**：designer 样式令牌化（并入 core web shell handoff 口径）；
+  3. **交互桌面化（上游 issue + GeWu 侧后续）**：印章来源三通道——拖拽图片到画布 / 粘贴剪贴板 /
+     最近使用印章持久化（插件数据目录，二次使用免上传）；「上传印章」按钮弱化为「添加印章…」。
