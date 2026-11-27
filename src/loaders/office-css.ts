@@ -59,6 +59,53 @@ ${S} .file-viewer-web-print-menu > button {
   mask-position: center;
   mask-size: 15px 15px;
 }
+
+/* ===== 打印遮罩/盖章浮层（core printMaskDesigner）GeWu 对齐 =====
+   上游硬编码（system-ui/#40546a/#16774c 上游绿/999px 胶囊/12px-800），而 core 打印菜单
+   本身已令牌化——上游内部不一致（upstream Issue 5 佐证）。
+   浮层样式与 shell 同一棵 shadow 树（designer 走 root.getRootNode() 注入），前缀可达；
+   上游 overlay 令牌化后本节整体删除（同 L3 到期条件） */
+${S} .fv-print-mask-toolbar {
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  font-family: var(--font-family-ui);
+  padding: 6px 10px;
+  gap: 6px;
+}
+${S} .fv-print-mask-toolbar span {
+  font: 400 var(--font-size-xs)/1.4 var(--font-family-ui);
+  color: var(--color-text-secondary);
+}
+${S} .fv-print-mask-toolbar button {
+  min-width: 0;
+  height: var(--file-viewer-button-height);
+  padding: 0 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-input);
+  color: var(--color-text-secondary);
+  font: 400 var(--font-size-xs)/1 var(--font-family-ui);
+}
+${S} .fv-print-mask-toolbar button:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-text-primary);
+}
+${S} .fv-print-mask-toolbar button.primary {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+${S} .fv-print-mask-toolbar button.primary:hover {
+  background: var(--color-primary-hover);
+  color: #fff;
+}
+/* 遮罩块手柄与印章缩放手柄：上游绿 → 主色（画布内可见元素，随主题） */
+${S} .fv-print-stamp-resize,
+${S} .fv-print-mask-block-remove {
+  background: var(--color-primary);
+}
 `
 
 /** 安装覆盖（幂等；随 applyViewerThemeBridge 一起在 render 完成与 setTheme 后调用） */

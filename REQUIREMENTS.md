@@ -391,16 +391,19 @@ plugin-office-viewer/
    打印页样式，参照 msdoc 的 `getPrintMaskPages` 契约（core 遮罩打印即可复用）；
 3. 原则：按钮显隐继续走能力探测，**不硬造不可用的按钮**（与导出能力探测同哲学）。
 
-**遮罩/盖章打印（core features/printMaskDesigner.js）改进建议**：
+**遮罩/盖章打印（core features/printMaskDesigner.js）改进建议**（真机截图实证 2026-11-27）：
 - UI 与 GeWu 不一致（实证）：designer 内联样式硬编码 system-ui、`#40546a` 文字、999px 胶囊按钮、
   800/12px 字重字号、上游绿 hover（rgba(33,163,102,.1)/#16774c）——同 core 老风格，
   **未走 core 已有的 --file-viewer-* 令牌体系**（core 打印菜单本身已令牌化，designer 没跟上，
-  属上游内部不一致，可作 issue 佐证）；
+  属上游内部不一致）→ **已升级为上游 Issue 5（浮层/弹层令牌化）**，见 dwg 仓库
+  docs/upstream-issues.md Issue 5；
 - 印章上传 = 隐藏 `<input type="file" accept="image/*">` + FileReader（弹系统选择器），
-  不符合桌面软件习惯；
-- 建议：
-  1. **短期（插件侧）**：office-css.ts 扩 `.fv-print-mask-*` 节（双类名特异性，同 L3 范式）
-     对齐基线表——上游令牌化 designer 后整节删除；
-  2. **上游 issue**：designer 样式令牌化（并入 core web shell handoff 口径）；
-  3. **交互桌面化（上游 issue + GeWu 侧后续）**：印章来源三通道——拖拽图片到画布 / 粘贴剪贴板 /
+  不符合桌面软件习惯（并入 Issue 5 交互桌面化建议）；
+- 落地状态：
+  1. **短期（插件侧）✅ 已实施**：office-css.ts `.fv-print-mask-*` 节（双类名特异性，同 L3
+     范式）——浮层容器 --color-bg-elevated/--radius-md/--shadow-lg、按钮基线
+     （22px/radius-sm/11px-400）、主按钮 .primary 走 --color-primary、手柄/移除钮
+     上游绿 → 主色。上游 overlay 令牌化后整节删除；
+  2. **上游 issue ✅ 已成文**：Issue 5（core overlay 令牌组约 8 个 + designer 迁移消费）；
+  3. **交互桌面化（Issue 5 合并后推进）**：印章来源三通道——拖拽图片到画布 / 粘贴剪贴板 /
      最近使用印章持久化（插件数据目录，二次使用免上传）；「上传印章」按钮弱化为「添加印章…」。
